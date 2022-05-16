@@ -40,7 +40,7 @@ library(hhh4addon)
 
 We will use two data sets provided with the `hhh4addon` package (original data from Robert Koch Institute). The `noroBE` data contain weekly counts confirmed of norovirus cases in the twelve districts of Berlin, 2011--2017. The `rotaBE` data contain the same for rotavirus. In this note the norovirus data are analysed, which as an exercise you will be able to apply to the rotavirus data.
 
-```{r <data, cache=TRUE}
+```{r <data}
 # get the data
 data("noroBE")
 # if you don't have the hhh4addon package installed you can use:
@@ -64,7 +64,7 @@ plot(noroBE, observed ~ unit, population = 100000/3500000, labels = TRUE)
 
 We moreover take a look at the slot `neighbourhood` of the `sts` object. In this case it contains path distances between the districts: e.g., `chwi` and `frkr` have a distance of 2 as you need to go through `mitt` or `scho`.
 
-```{r <neighbourhood, cache=TRUE}
+```{r <neighbourhood}
 # check the neighbourhood structure, which is stored in the @neighbourhood slot 
 # of the sts object:
 noroBE@neighbourhood
@@ -102,7 +102,7 @@ In `surveillance` this model is specified as follows. Reminder: The `hhh4` funct
     - `family`: the type of distribution used in the recursive model formulation (either `"Poisson"`, `"NegBin1"`, or `"NegBinM"`).
     - `subset`: The subset of the time series to which the model shall be fit.
 
-```{r fit1, cache=TRUE, fig.height=12}
+```{r fit1, fig.height=12}
 # first define a subset of the data to which to fit (will be used in all model
 # fits to ensure comparability of AIC values):
 subset_fit <- 6:(nrow(noroBE@observed) - 52)
@@ -138,7 +138,7 @@ $$
 \frac{Y_{it} - \hat{\mu}_{it}}{\hat{\sigma}_{it}} = \frac{Y_{it} - \hat{\mu}_{it}}{\sqrt{\hat{\mu}_{it} + \hat{\mu}_{it}^2/\psi}},
 $$
 which are not currently implemented in `surveillance`, but can be computed using a little auxiliary function. For now I just look at their mean and variance per district.
-```{r function_pr, cache=TRUE, fig.height=8}
+```{r function_pr, fig.height=8}
 # helper function to compute Pearson residuals:
 pearson_residuals <- function(hhh4Obj){
   # compute raw residuals:
@@ -172,7 +172,7 @@ Y_{it} \ \mid \ \ \text{past} & \sim \text{NegBin}(\mu_{it}, \psi)\\
 \nu_{it} & = \alpha^\nu_i + \beta^\nu \sin(2\pi t/52) + \gamma^\nu \cos(2\pi t/52)
 \end{align}
 
-```{r fit2, cache=TRUE}
+```{r fit2}
 ##################################################################
 # Model 2:
 # We use fe(..., unitSpecific = TRUE) to add fixed effects for each unit,
@@ -224,7 +224,7 @@ In a simple graphical ilustration with just three districts where district 2 is 
 ![](tutorial_files/figure-html/model2.png)
 
 
-```{r fit3, cache=TRUE}
+```{r fit3}
 # The default setting for the ne component is to use weights 
 # neighbourhood(stsObj) == 1 (see ?hhh4).
 neighbourhood(noroBE) == 1
@@ -276,7 +276,7 @@ Returning to our simple illustration with three districts, this step adds some a
 
 ![](tutorial_files/figure-html/model3.png)
 
-```{r fit4, cache=TRUE}
+```{r fit4}
 ##################################################################
 # Model 4
 
@@ -305,7 +305,7 @@ fit4 <- hhh4(noroBE_power, ctrl4)
 AIC(fit4)
 ```
 This yields a quite drastic improvement in AIC. We can visualize the weights $w_{ji}$ as a function of the path dependence $o_{ji}$
-```{r neweights,cache=TRUE, fig.height=4}
+```{r neweights, fig.height=4}
 # visualize the nighbourhood weights:
 plot(fit4, type = "neweights", main = "Weights by path distance\n (note: 1 is same region and 2 is direct neighbours here)")
 ```
@@ -320,7 +320,7 @@ plot(fit4, unit = 1:12, par.settings = list(mfcol = c(6, 2)))
 
 Including seasonality in the `ar` and `ne` components when both are present can lead to identifiability issues. In the more parsimonious model where only the `ne` component is present, however, including seasonal terms here can considerably improve the model fit. This is indeed the case in our example.
 
-```{r fit5, cache=TRUE}
+```{r fit5}
 ##################################################################
 # Model 5:
 ctrl5 <- list(end = list(f = addSeason2formula(~0 + fe(1, unitSpecific = TRUE),
@@ -337,7 +337,7 @@ AIC(fit5)
 ```
 
 We also consider the autocorrelation of the Pearson residuals. For several regions there are pronounced residual autocorrelations at lags 2 or 3, indicating that there is additional information to be exploited.
-```{r pr5, cache=TRUE}
+```{r pr5}
 # compute Pearson residuals:
 pr5 <- pearson_residuals(fit4)
 par(mfrow = c(3, 4))
@@ -365,7 +365,7 @@ Returning a last time to our toy illustration of three districts, this step adds
 
 ![](tutorial_files/figure-html/model4.png)
 
-```{r lag_types, fig.height=4, cache=TRUE}
+```{r lag_types, fig.height=4}
 # check out examples of the different lag types:
 # geometric:
 (g <- geometric_lag(par_lag = 1.5, min_lag = 1, max_lag = 5))
@@ -388,7 +388,7 @@ The parameterizations of these functions are chosen such that any value from the
 
 <!-- 
 If **fixed** weights for past incidence shall be used, e.g. motivated by a serial interval distribution taken from the literature, the function `hhh4_lag` can be used. As an exampe we use the geometric lag weight distribution from above.
-```{r fit6, cache=TRUE}
+```{r fit6}
 ##################################################################
 # Model 6
 ctrl6 <- list(end = list(f = addSeason2formula(~0 + fe(1, unitSpecific = TRUE),
@@ -411,7 +411,7 @@ AIC(fit6)
 
 The lag weihts can be pre-specified, but most of the time we will estimate them from the data rather than pre-specifying them. This can be done via the (poorly named) function `profile_par_lag`. We use geometric lags (which is also the default).
 
-```{r fit7, cache=TRUE}
+```{r fit7}
 ##################################################################
 # Model 7
 ctrl7 <- list(end = list(f = addSeason2formula(~0 + fe(1, unitSpecific = TRUE),
@@ -432,7 +432,7 @@ AIC(fit7)
 ```
 
 We can plot the weights as estimated from the data:
-```{r plot_weights, fig.height=4, cache=TRUE}
+```{r plot_weights, fig.height=4}
 # plot the weights assigned to the different lags:
 par(mfrow = 1:2)
 plot(fit7$distr_lag, type = "h", xlab  = "lag",
@@ -440,7 +440,7 @@ plot(fit7$distr_lag, type = "h", xlab  = "lag",
 ```
 
 And consider the Pearson residuals, which look less problematic than before (at least that's what I like to tell myself).
-```{r pr6, cache=TRUE, fig.height=8}
+```{r pr6, fig.height=8}
 # check Pearson residuals
 pr7 <- pearson_residuals(fit6)
 par(mfrow = c(3, 4))
@@ -457,7 +457,7 @@ The packages contain functionality to imitate one-step-ahead (out-of-sample) for
 
 For both *lower values*` are better.
 
-```{r owa, cache=TRUE, fig.height=4}
+```{r owa, fig.height=4}
 ##################################################################
 # one-step-ahead forecasting: generate forecasts sequentially
 # compare models 2, 4 and 7
@@ -491,7 +491,7 @@ We can see that the more complex model formulations also translate to improved p
 ## Predictive moments at longer forecast horizons.
 
 The `hhh4addon` package also contains functions to compute predictive moments (means, variances, autocorrelations) for longer time horizons as well as marginal/stationary moments of the fitted model.
-```{r moments, cache=TRUE, fig.height=4}
+```{r moments, fig.height=4}
 ##################################################################
 # longer-term predictive moments can be computed using predictive_moments:
 # predictive moments 10 weeks ahead:
@@ -553,7 +553,7 @@ Here are some model aspects you can play around with:
 -  Higher-order seasonal terms (as in a Fourier series) can be included by setting `S = 2` or higher in the `addSeason2formula` function.
 -  Linear time trends can be included by adding ` + t` to a formula, e.g. `f = addSeason2formula($\sim$ 0 + t + fe(1, unitSpecific = TRUE), S = 1)`
 -  Rotavirus transmission is known to be linked to temperature (https://doi.org/10.1098/rspb.2009.1755). We therefore uploaded a time series of weekly mean temperature values in Berlin (average of daily temperatures at 2pm, lagged by one week) to the GitHub repo of the workshop. These (or a transformation) can be used a a covariate.
-```{r load_temp, cache=TRUE}
+```{r load_temp}
 # get temperature data:
 data_temperature <-
   read.csv(paste0("https://raw.githubusercontent.com/cmmid/hhh4-workshop/", 
