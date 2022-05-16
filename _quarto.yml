@@ -1,0 +1,30 @@
+project:
+  type: website
+
+website:
+  title: "hhh4 workshop"
+  description: "Workshop on the Endemic-Epidemic framework for infectious disease modelling"
+  navbar:
+    background: primary
+    left:
+      - text: Home
+        href: index.qmd
+      - text: Tutorials
+        menu:
+          - text: "Tutorial 1"
+            href: tutorials/introduction.qmd
+          - text: "Tutorial 2"
+            href: tutorials/multivariate.qmd
+          - text: "Tutorial 3"
+            href: tutorials/covariate.qmd
+      - text: Applications
+        menu:
+          - text: "Session 1"
+            href: applications/session1.qmd
+          - text: "Session 2"
+            href: applications/session2.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css

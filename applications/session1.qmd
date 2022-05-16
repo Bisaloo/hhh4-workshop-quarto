@@ -1,0 +1,13 @@
+---
+title: "Short talks on applications: session 1"
+editor_options: 
+  markdown: 
+    wrap: 80
+---
+
+| Presenter         | Title                                                                        | Bibliography                                                           | Video |
+|--------------|-----------------------------|-------------------------|--------------|
+| Mathilde Grimée   | COVID-19 in Switzerland                                                      | [Grimée et al. (2021)](https://doi.org/10.1016/j.spasta.2021.100552)   |       |
+| Trang Nguyen      | Measles in Vietnam                                                           |                                                                        |       |
+| Claudio Fronterre | COVID-19 in England                                                          | [Fronterre et al. (2020)](https://doi.org/10.1101/2020.05.15.20102715) |       |
+| Johannes Bracher  | Fitting endemic-epidemic models to underreported disease surveillance counts | [Bracher & Held (2020)](https://doi.org/10.1111/biom.13371)            |       |
