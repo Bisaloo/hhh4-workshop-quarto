@@ -4,6 +4,8 @@ project:
 website:
   title: "hhh4 workshop"
   description: "Workshop on the Endemic-Epidemic framework for infectious disease modelling"
+  repo-url: https://github.com/bisaloo/hhh4-workshop-quarto
+  repo-actions: [edit, source, issue]
   navbar:
     background: primary
     left:
@@ -23,6 +25,9 @@ website:
             href: applications/session1.qmd
           - text: "Session 2"
             href: applications/session2.qmd
+    right:
+      - icon: github
+        href: https://github.com/bisaloo/hhh4-workshop-quarto
 
 format:
   html:
